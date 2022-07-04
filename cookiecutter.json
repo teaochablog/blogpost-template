@@ -1,0 +1,6 @@
+{
+    "author": "Matthew Bilton",
+    "email": "matt@teaochadesign.com",
+    "github": "https://github.com/teaochablog/{{cookiecutter.project_slug}}",
+    "project_slug": "blogpost"
+  }
