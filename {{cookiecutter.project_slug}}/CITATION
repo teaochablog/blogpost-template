@@ -1,4 +1,1 @@
-Please cite as:
-
-{{cookiecutter.author}}:
-"<TITLE>", Version <VERSION>, <MONTH> <YEAR>, {{cookiecutter.github}}, <DOI>
+{{cookiecutter.author}}. <TITLE>. (<YEAR>). {{cookiecutter.github}}. <DOI>

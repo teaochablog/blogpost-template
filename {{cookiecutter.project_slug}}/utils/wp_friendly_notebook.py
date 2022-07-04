@@ -46,8 +46,7 @@ def make_wp_friendly_notebook(html_filename, public_address, output_dir):
 
     html_dir = os.path.dirname(html_filename)
     base_filename = os.path.basename(html_filename)
-    base_subdir = re.sub('\.html', '', base_filename)
-    images_subdir = os.path.join(base_subdir, 'img')
+    images_subdir = 'img'
 
     # Step 0:   Extract mathjax setup
     mathjax_config = soup.find("script", {"type" : "text/x-mathjax-config"})

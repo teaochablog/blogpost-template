@@ -19,9 +19,9 @@ dist:
 		--TagRemovePreprocessor.enabled=True \
 		--TagRemovePreprocessor.remove_cell_tags="['no_render', 'hidden']" \
 		$(PROJECT_ROOT)/$(PROJECT_NAME).ipynb
-	python3 -m $(UTILS_DIR)/wp_friendly_notebook \
+	cd $(UTILS_DIR) && python3 -m wp_friendly_notebook \
 		$(PROJECT_ROOT)/$(PROJECT_NAME).html \
-		$(CDN) \
+		$(CDN)/$(PROJECT_NAME) \
 		$(PROJECT_ROOT)/dist
 	rm  $(PROJECT_ROOT)/$(PROJECT_NAME).html
 
