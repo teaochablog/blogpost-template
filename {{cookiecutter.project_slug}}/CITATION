@@ -1,1 +1,1 @@
-{{cookiecutter.author}}. <TITLE>. (<YEAR>). {{cookiecutter.github}}. <DOI>
+{{cookiecutter.author}}. (<YEAR>). <TITLE>. {{cookiecutter.github}}. <DOI>
