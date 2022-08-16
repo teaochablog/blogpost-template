@@ -69,10 +69,14 @@ def html_fig(fig, fignum, figcaption, source='TeaochaDesign'):
     '''
     fig_b64 = b64encode(print_figure(fig)).decode("utf-8")
     img_data = f'data:image/png;base64,{fig_b64}'
+    if source == '' or source == None:
+        source = ''
+    else:
+        source = f' (Source: {source})'
     html = '''
         <figure class="nb-diagram" align="center">
             <img src="{}">
-            <figcaption>Figure {}: {} (Source: {})</figcaption>
+            <figcaption>Figure {}: {}{}</figcaption>
         </figure>
     '''.format(img_data, fignum, figcaption, source)
     plt.close();
