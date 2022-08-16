@@ -54,7 +54,7 @@ def html_df(df, fignum, figcaption):
     df_html = df.to_html()
     html = '''
         <figure
-            class="nb-diagram"
+            class="nb-generated-diagram"
             align="center"
             style="display:flex; align-items:center; flex-flow:column;"
         >
@@ -75,7 +75,7 @@ def html_fig(fig, fignum, figcaption, source='TeaochaDesign'):
     else:
         source = f' (Source: {source})'
     html = '''
-        <figure class="nb-diagram" align="center">
+        <figure class="nb-generated-diagram" align="center">
             <img src="{}">
             <figcaption>Figure {}: {}{}</figcaption>
         </figure>
