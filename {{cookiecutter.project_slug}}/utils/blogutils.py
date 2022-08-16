@@ -1,10 +1,16 @@
+import os
+import re
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.collections import PolyCollection
-from cycler import cycler
-from io import BytesIO
 import requests
 import PIL
+import seaborn as sns
+import pandas as pd
+from matplotlib.collections import PolyCollection
+from io import BytesIO
+from IPython.core.display import HTML
+from IPython.core.pylabtools import print_figure
+from base64 import b64encode
 
 
 # -------------------------------------------------------------------
@@ -17,6 +23,7 @@ class col:
     PRIMARY = '#BF1616'
     SECONDARY = '#615F5C'
     TERTIARY = '#F6F7F7'
+    NEUTRAL_LIGHTER = '#F5F5F5'
     BLACK = '#000000'
     WHITE = '#FFFFFF'
     GRAY = '#AAB9C3'
@@ -30,20 +37,47 @@ class col:
     BLUE = '#0693E3'
     PURPLE = '#9B50E1'
 
-def init_mpl(pyplot_module):
-    cycle_colors = [
-        col.RED, col.BLUE, col.GREEN,
-        col.PURPLE, col.YELLOW, col.ORANGE,
-        col.PINK, col.TURQUOISE, col.SKY_BLUE
-    ]
-    pyplot_module.rcParams['axes.prop_cycle'] = cycler(color=cycle_colors)
-    #pyplot_module.rcParams['grid.color'] = col.PRIMARY
+def init_theme(_sns):
+    _sns.set_theme(style='darkgrid')
+    _sns.set_style('darkgrid', {'axes.facecolor': col.NEUTRAL_LIGHTER })
+    _sns.set_palette("Paired")  
 
     
 # -------------------------------------------------------------------
 # MATPLOTLIB UTILS
 # -------------------------------------------------------------------
-    
+
+def html_df(df, fignum, figcaption):
+    '''Renders as pandas dataframe as a figure with a caption.
+    '''
+    df_html = df.to_html()
+    html = '''
+        <figure
+            class="nb-diagram"
+            align="center"
+            style="display:flex; align-items:center; flex-flow:column;"
+        >
+            {}
+            <figcaption>Figure {}: {}</figcaption>
+        </figure>
+    '''.format(df_html, fignum, figcaption)
+    return HTML(html)
+
+def html_fig(fig, fignum, figcaption, source='TeaochaDesign'):
+    '''Takes a matplotlib figure and turns it into an HTML
+    figure instead.
+    '''
+    fig_b64 = b64encode(print_figure(fig)).decode("utf-8")
+    img_data = f'data:image/png;base64,{fig_b64}'
+    html = '''
+        <figure class="nb-diagram" align="center">
+            <img src="{}">
+            <figcaption>Figure {}: {} (Source: {})</figcaption>
+        </figure>
+    '''.format(img_data, fignum, figcaption, source)
+    plt.close();
+    return HTML(html)
+
 def plot_waterfall(x, y, zs, ax):
     '''
     Plotting helper to create a 3D cascading waveform
@@ -98,3 +132,53 @@ def inverse_svd(u, s, v, rank):
     '''
     sv = np.matmul(np.diag(np.concatenate([s[:rank], np.zeros(len(s)-rank)])), v)
     return np.matmul(u, sv)
+
+def image_bootstrapper(images_dir: str, x_crop: float=0.5, y_crop: float=0.5):
+    '''Given a directory containing images, returns a generator for
+    subsamples of the images in that directory.
+    
+    Params:
+        images_dir:
+            The directory containing the images
+        x_crop:
+            The ratio of the image to randomly crop in the x axis
+        y_crop:
+            The ratio of the image to randomly crop in the y axis
+    '''
+    image_paths = [
+        img_path for img_path in os.listdir(images_dir)
+        if re.search(r'\.(png|jpg|jpeg|bmp)$', img_path)
+    ]
+    images = [
+        PIL.Image.open(os.path.join(images_dir, image_path))
+        for image_path in image_paths
+    ]
+    
+    while True:
+        img = images[np.random.randint(len(images))]
+        crop_width = np.math.floor(img.width * x_crop)
+        crop_max_x = img.width - crop_width
+        crop_x = np.random.randint(crop_max_x) if crop_max_x > 0 else 0
+        crop_height = np.math.floor(img.height * y_crop)
+        crop_max_y = img.height - crop_height
+        crop_y = np.random.randint(crop_max_y) if crop_max_y > 0 else 0
+        
+        cropped = img.crop((
+            crop_x,
+            crop_y,
+            crop_x + crop_width,
+            crop_y + crop_height
+        ))
+        yield cropped
+
+def kl(P,Q):
+    """KL-Divergence of Q with respect to P.
+    """
+    # Epsilon is used here to avoid conditional code for
+    # checking that neither P nor Q is equal to 0.
+    epsilon = 0.00001
+    P = P + epsilon
+    Q = Q + epsilon
+    
+    divergence = np.sum(P*np.log(P/Q))
+    return divergence

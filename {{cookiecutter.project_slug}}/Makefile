@@ -18,6 +18,8 @@ dist:
 	jupyter nbconvert --to=html \
 		--TagRemovePreprocessor.enabled=True \
 		--TagRemovePreprocessor.remove_cell_tags="['no_render', 'hidden']" \
+		--TagRemovePreprocessor.remove_input_tags="['hide_input']" \
+        --TagRemovePreprocessor.remove_all_outputs_tags="['hide_output']" \
 		$(PROJECT_ROOT)/$(PROJECT_NAME).ipynb
 	cd $(UTILS_DIR) && python3 -m wp_friendly_notebook \
 		$(PROJECT_ROOT)/$(PROJECT_NAME).html \
