@@ -12,6 +12,7 @@ from IPython.core.display import HTML
 from IPython.core.pylabtools import print_figure
 from base64 import b64encode
 
+plt.rcParams['figure.dpi'] = 300
 
 # -------------------------------------------------------------------
 # NOTEBOOK STYLING
